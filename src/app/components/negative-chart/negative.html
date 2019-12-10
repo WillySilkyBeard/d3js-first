@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<style>
+.d3js {
+    width: 80%;
+    display: block;
+    margin: auto;
+}
+.bar--positive {
+  fill: steelblue;
+}
+
+.bar--negative {
+  fill: darkorange;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+            <div class="d3js"></div>
+    </div>
+    
+</body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+
+let data = [
+    {name: 'A', value: -15},
+    {name: 'B', value: 20},
+    {name: 'C', value: 222},
+    {name: 'D', value: -108},
+    {name: 'E', value: 2},
+    {name: 'Toyota', value: -50},
+    {name: 'Honda', value: 20},
+    {name: 'CC', value: 22},
+    {name: 'DD', value: -80},
+    {name: 'EE', value: 2},
+];
+
+
+var margin = {top: 20, right: 30, bottom: 40, left: 30},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.linear() // d3.scale.linear() потому что по Х распологаются числа
+    .range([0, width]); // данные накладываются на ось
+
+var y = d3.scale.ordinal() // Так как по Y располагаются не какие-то количественные показатели, а названия команд, выполняющие роль подписей к столбикам, то надо применить функцию d3.scale.ordinal(): 
+    .rangeRoundBands([0, height], 0.1); // Функция rangeRoundBands() принимает отрезок, на котором будут располагаться названия команд ([0, height]), а также коэффициент масштабирования столбиков - 0.1.
+
+var xAxis = d3.svg.axis()
+    .scale(x) // построить шкалу
+    .orient("bottom"); // горизонтальная
+
+var yAxis = d3.svg.axis()
+    .scale(y) // построить шкалу
+    .orient("left") // вертикальная слева
+    .tickSize(5) // полоска отступы от шкалы
+    .tickPadding(6); // отступы от шкалы
+
+var svg = d3.select(".d3js").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); // сдвиг оси "вниз и вправо"
+
+
+  x.domain(d3.extent(data, function(d) { return d.value; })).nice(); //диапазон данных
+  y.domain(data.map(function(d) { return d.name; })); //диапазон данных
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", function(d) { return "bar bar--" + (d.value < 0 ? "negative" : "positive"); })
+      .attr("x", function(d) { return x(Math.min(0, d.value)); })
+      .attr("y", function(d) { return y(d.name); })
+      .attr("width", function(d) { return Math.abs(x(d.value) - x(0)); })
+      .attr("height", y.rangeBand());
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + x(0) + ",0)")
+      .call(yAxis);
+
+function type(d) {
+  d.value = +d.value;
+  return d;
+}
+
+</script>
