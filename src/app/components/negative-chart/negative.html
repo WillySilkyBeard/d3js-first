@@ -84,7 +84,7 @@ var svg = d3.select(".d3js").append("svg")
 
   svg.selectAll(".bar")
       .data(data)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("class", function(d) { return "bar bar--" + (d.value < 0 ? "negative" : "positive"); })
       .attr("x", function(d) { return x(Math.min(0, d.value)); })
       .attr("y", function(d) { return y(d.name); })
