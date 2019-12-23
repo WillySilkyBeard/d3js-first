@@ -12,9 +12,13 @@
   fill: darkorange;
   }
 
-  .bar:hover {
-    fill: rgb(12, 151, 8);
-    transition: fill .5s ease-in-out;
+  .bar--negative:hover {
+    fill: rgb(212, 112, 30);
+    transition: all .3s ease-in;
+  }
+  .bar--positive:hover {
+    fill: rgb(30, 94, 212);
+    transition: all .3s ease-in;
   }
   
   .axis text {
@@ -26,9 +30,13 @@
   fill: none;
   stroke: rgb(216, 46, 46);
   shape-rendering: crispEdges;
-  }
+  }  
   
-  /* .axis-x {
-    fill: darkorange;
-    stroke: darkorange;
+  /* text {
+    fill: #999;
   } */
+  .axis-x,
+  .axis-y {
+    fill: darkorange;
+    stroke: rgba(4, 32, 14, 0.356);
+  }

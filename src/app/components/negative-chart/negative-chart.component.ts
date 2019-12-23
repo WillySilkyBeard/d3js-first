@@ -17,6 +17,10 @@ export class NegativeChartComponent implements OnInit {
   private x: any;
   private y: any;
   private svg: any;
+  private bars: any;
+  private barsLabels: any;
+  private textLabels: any;
+  private text: any;
 
   private data: Array<any> = [
     {name: 'A', value: -15},
@@ -76,7 +80,7 @@ export class NegativeChartComponent implements OnInit {
       .attr("y", d => this.y(d.name))
       .attr("width", d => Math.abs(this.x(d.value) - this.x(0)))
       .attr("height", this.y.bandwidth())
-
+      
     // xAxis
     this.svg.append('g')
       .attr('class', 'axis axis-x')
