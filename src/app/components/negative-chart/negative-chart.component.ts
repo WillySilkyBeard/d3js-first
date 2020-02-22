@@ -31,7 +31,7 @@ export class NegativeChartComponent implements OnInit {
     {name: 'Toyota', value: -200},
     {name: 'Honda', value: 20},
     {name: 'CC', value: 22},
-    {name: 'DD', value: -80},
+    {name: 'RangeRover', value: -80},
     {name: 'EE', value: 2},
 ];
 

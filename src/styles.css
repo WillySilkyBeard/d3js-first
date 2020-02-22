@@ -40,3 +40,15 @@
     fill: darkorange;
     stroke: rgba(4, 32, 14, 0.356);
   }
+
+/* .axis path {
+  fill: none;
+  stroke: grey;
+  shape-rendering: crispEdges;
+}
+.axis text {
+}
+.tick line {
+  stroke: grey;
+  shape-rendering: crispEdges;
+} */
