@@ -11,7 +11,7 @@ export class TestComponent implements OnInit {
   @ViewChild('chart', {static: true}) private chartContainer: ElementRef;
 
   private element: any;
-  private margin: any = {top: 50, right: 10, bottom: 50, left: 10};
+  private margin: any = {top: 80, right: 10, bottom: 80, left: 10};
   private padding: number = 5;
   private CHART_WIDTH: number = 1110;
   private CHART_HEIGHT : number = 300;
@@ -23,43 +23,34 @@ export class TestComponent implements OnInit {
   private zerroX: any;
   private y: any;
   private svg: any;
-  private chart:any;
-  private text: any;
-  private textLabels: any;
 
   private bars: any;
-
-  private maxValue: any;
-  private minValue: any;
+  private labels: any;
 
   private newArr: Array<any> = []
   private dFor:any
   private iFor:any
 
   private interval:any = 365;
-  private data: Array<any> = [
-];
+  private data: Array<any> = [];
 
   
   constructor() { }
 
   ngOnInit() {
-    this.pushToArray(this.interval) // наполняем наш array данными
+    this.getData(this.interval) // наполняем наш array данными
     this.initVertChart() // инициализация графика
   }
 
   // тестирую, обновляем данные
   onUpdate() {
-    this.redraw() // наполняем наш array данными
+    this.redraw() // наполняем наш array новыми данными
 
     console.log('updated');
-    console.log(this.data);
-    
-    
   }
 
   // наполняем массив рандомными данными
-  public pushToArray(numb) {
+  public getData(numb) {
     
     for (this.iFor = 1; this.iFor < numb; this.iFor++) {
       this.data.push({name: this.iFor, value: this.getRandomIntInclusive(-20,50)})
@@ -92,25 +83,24 @@ export class TestComponent implements OnInit {
   // initChart
   public initVertChart() {
     this.element = this.chartContainer.nativeElement
-
+    
     // create scales
     this.y = d3.scaleLinear() //d3.scale.linear() потому что по этой оси распологаются числа
-      .domain(d3.extent(this.data, d => (d.value < 0) ? d.value+5 : d.value-5).sort((a: number, b: number) => b - a)) // domain - это диапазон. extent - Returns the minimum and maximum value in the given iterable
+      .domain(d3.extent(this.data, d => (d.value < 0) ? d.value + 5 : d.value-5).sort((a: number, b: number) => b - a)) // domain - это диапазон. extent - Returns the minimum and maximum value in the given iterable
       .range([0, this.height]) // данные накладываются на ось
       .nice() // ??? Функция nice() позволяет расширить начало и конец входного домена до ближайших округленных значений.
       
     this.x = d3.scaleBand() // Так как по Y располагаются не какие-то количественные показатели, а названия команд, выполняющие роль подписей к столбикам, то надо применить функцию d3.scale.ordinal(): 
       .domain(this.data.map(d => d.name)) // отметки по оси Х
-      .paddingInner(0.02) // отступ между столбцами
+      .paddingInner(0.01) // отступ между столбцами
       .range([0, this.width]) // Функция rangeRoundBands() принимает отрезок, на котором будут располагаться названия команд ([0, height]), а также коэффициент масштабирования столбиков - 0.1.
 
     this.zerroX = d3.scaleBand() // Так как по Y располагаются не какие-то количественные показатели, а названия команд, выполняющие роль подписей к столбикам, то надо применить функцию d3.scale.ordinal(): 
-      .paddingInner(0.02) // отступ между столбцами
       .range([0, this.width]) // Функция rangeRoundBands() принимает отрезок, на котором будут располагаться названия команд ([0, height]), а также коэффициент масштабирования столбиков - 0.1.
 
-      this.xTop = d3.scaleBand() // Так как по Y располагаются не какие-то количественные показатели, а названия команд, выполняющие роль подписей к столбикам, то надо применить функцию d3.scale.ordinal(): 
+    this.xTop = d3.scaleBand() // Так как по Y располагаются не какие-то количественные показатели, а названия команд, выполняющие роль подписей к столбикам, то надо применить функцию d3.scale.ordinal(): 
       .domain(this.data.map(d => d.name)) // отметки по оси Х
-      .paddingOuter(1) // отступ между столбцами
+      .paddingOuter(1) // отступ между столбцами (для теста)
       .range([0, this.width]) // Функция rangeRoundBands() принимает отрезок, на котором будут располагаться названия команд ([0, height]), а также коэффициент масштабирования столбиков - 0.1.
 
       // console.log(d3.extent(this.data, d => d.value).sort(function(a: number, b: number) {return b - a})); // сортирует ось У по убыванию
@@ -119,20 +109,31 @@ export class TestComponent implements OnInit {
     this.svg = d3.select(this.element).append('svg')
       .attr('width', this.width + this.margin.left + this.margin.right)
       .attr('height', this.height + this.margin.top + this.margin.bottom + this.padding)
-    .append('g')
+      .append('g')
       .attr('class', 'bars')
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")") // сдвиг оси "вниз и вправо"
+
     // add bars
-    
     this.bars  = this.svg.selectAll(".bar")
       .data(this.data)
-      .enter().append("rect")
+      .enter()
+      .append("rect")
       .attr("class", d => "bar bar--" + (d.value < 0 ? "negative" : "positive"))
       .attr("y", d => this.y(Math.max(0, d.value)))
       .attr("x", d => this.x(d.name))
-      .attr('fill', function(d, i) { return 'hsl(240,50%,'+(75-d.value/2)+'%)'; }) // не работает когда прописаны стили
+      .attr('fill', (d, i) => 'hsl(240,50%,'+(75-d.value/2)+'%)') // не работает когда прописаны стили
       .attr("width", this.x.bandwidth()) // .attr("width", this.x.bandwidth())
       .attr("height", d => Math.abs(this.y(d.value) - this.y(0)))
+
+    // add lables
+    this.labels = this.svg.selectAll("div")
+      .data(this.data)
+      .enter()
+      .append("text")
+      .attr("x", d => this.x(d.name) + this.x.bandwidth() / 2)
+      .attr("y", d => { if(d.value < 0) { return this.y(Math.min(0, d.value)) + 15 } else { return this.y(Math.max(0, d.value)) - 5 }})
+      .attr("text-anchor", "middle")
+      .text(d => d.value)
 
     // обработка событий
     // mouseenter
@@ -149,8 +150,8 @@ export class TestComponent implements OnInit {
             return `translate(${0}, ${10})`;
           }
         })
-      ;
     })
+
     // mouseleave
     this.bars
     .on('mouseleave', function(d) {
@@ -161,10 +162,11 @@ export class TestComponent implements OnInit {
           
           return `translate(${0}, ${0})`;
         })
-      ;
-    }) 
+    })
 
-    this.bars.on('click', function(d, i) { alert(d.value) })
+    // onclick
+    // this.bars.on('click', function(d, i) { alert(d.value) })
+    this.bars.on('click', function(d, i) { console.log(d, i, d3.event, this) })
 
     // xAxis ось х
     this.svg.append('g')
@@ -179,37 +181,44 @@ export class TestComponent implements OnInit {
     //   .attr("transform", "translate(0,0)") //.attr("transform", "translate(" + x(0) + ",0)")
     //   .transition()
     //   .call(d3.axisLeft(this.y))
+
     // TopAxis
     this.svg.append('g')
       .attr('class', 'axis axis-x')
-      .attr('transform', `translate(0, ${this.y(this.getMaxValue(this.data))})`) // двигаем ось х до у(0)
+      .attr('transform', `translate(0, ${this.y(this.getMaxValue(this.data)) - 30})`) // двигаем ось х до у(0)
       .transition()
       .call(d3.axisTop(this.x).tickValues(this.x.domain().filter(function(d,i){ return !(i%7)})))
+
     // BottomAxis
     this.svg.append('g')
       .attr('class', 'axis axis-x')
-      .attr('transform', `translate(0, ${this.y(this.getMinValue(this.data))})`) // двигаем ось х до у(0)
+      .attr('transform', `translate(0, ${this.y(this.getMinValue(this.data)) + 30})`) // двигаем ось х до у(0)
       .transition()
       .call(d3.axisBottom(this.x).tickValues(this.x.domain().filter(function(d,i){ return !(i%7)}))) // фильтр тиков оси Х .tickValues(this.x.domain().filter(function(d,i){ return !(i%30)}))
-    
-    this.svg.selectAll('rect')
-      .data(this.data)
-      .enter()
-      .append("text")
   }
 
   // функция обновления данных
   public redraw() {
     this.data = []
-    this.pushToArray(this.interval)
-    // Update…
+    this.getData(this.interval)
+    // Update bars
     this.bars
       .data(this.data)
       .transition()
       .duration(1000)
       .attr("class", d => "bar bar--" + (d.value < 0 ? "negative" : "positive"))
+      .attr('fill', (d, i) => 'hsl(240,50%,'+(75-d.value/1)+'%)') // не работает когда прописаны стили
       .attr("y", d => this.y(Math.max(0, d.value)))
       .attr("height", d => Math.abs(this.y(d.value) - this.y(0)))
+
+    // Update lables
+    this.labels
+      .data(this.data)
+      .transition()
+      .duration(1000)
+      .attr("y", d => { if(d.value < 0) { return this.y(Math.min(0, d.value)) + 15 } else { return this.y(Math.max(0, d.value)) - 5 }})
+      .attr("text-anchor", "middle")
+      .text(d => d.value)
 
       console.log('redrawed');
   }

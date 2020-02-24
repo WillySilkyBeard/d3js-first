@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import "~bootstrap/dist/css/bootstrap.css"; */
 @import "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css";
-.blue {
+/* .blue {
     color: blue;
   }
   .bar--positive {
@@ -30,25 +30,23 @@
   fill: none;
   stroke: rgb(216, 46, 46);
   shape-rendering: crispEdges;
-  }  
+  }   */
   
   /* text {
     fill: #999;
   } */
-  .axis-x,
+  /* .axis-x,
   .axis-y {
     fill: darkorange;
     stroke: rgba(4, 32, 14, 0.356);
-  }
+  } */
 
-/* .axis path {
+.axis path {
   fill: none;
   stroke: grey;
   shape-rendering: crispEdges;
 }
-.axis text {
-}
 .tick line {
   stroke: grey;
   shape-rendering: crispEdges;
-} */
+}
